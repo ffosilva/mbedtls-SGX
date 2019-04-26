@@ -1,4 +1,4 @@
-FILE(GLOB MBEDTLS_SGX_SRC_FILES mbedtls-${MBEDTLS_VERSION}/library/*.c)
+FILE(GLOB MBEDTLS_SGX_SRC_FILES mbedtls/library/*.c)
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}_t.c
@@ -9,11 +9,11 @@ add_custom_command(
 
 add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c glue.c dummy.c net_sockets_proxy.c)
 
-add_subdirectory(mbedtls-${MBEDTLS_VERSION}/include)
+add_subdirectory(mbedtls/include)
 
 include_directories(
     $(CMAKE_CURRENT_SOURCE_DIR)
-    mbedtls-${MBEDTLS_VERSION}/include
+    mbedtls/include
     ${SGX_SDK}/include
     ${SGX_SDK}/include/tlibc
     ${SGX_SDK}/include/stlport
