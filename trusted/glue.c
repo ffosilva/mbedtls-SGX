@@ -72,3 +72,13 @@ int mbedtls_sgx_drbg_random( void *p_rng, unsigned char *output, size_t out_len 
 
     return 0;
 }
+
+// ocall for rand implementation
+int rand()
+{
+    int random_val = 0;
+
+    sgx_read_rand((unsigned char *) &random_val, sizeof(random_val));
+
+    return random_val;
+}

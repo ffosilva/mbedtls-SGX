@@ -1667,7 +1667,7 @@ void mbedtls_rsa_free( mbedtls_rsa_context *ctx )
 #endif
 }
 
-#if defined(MBEDTLS_SELF_TEST) && defined(___)
+#if defined(MBEDTLS_SELF_TEST)
 
 #include "mbedtls/sha1.h"
 
