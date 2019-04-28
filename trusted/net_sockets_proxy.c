@@ -80,14 +80,14 @@ static int wsa_init_done = 0;
 /*
  * Initialize a context
  */
-void mbedtls_net_init_ocall(mbedtls_net_context *ctx) {
+void mbedtls_net_init(mbedtls_net_context *ctx) {
   ctx->fd = -1;
 }
 
 /*
  * Initiate a TCP connection with host:port and the given protocol
  */
-int mbedtls_net_connect_ocall(mbedtls_net_context *ctx, const char *host, const char *port, int proto) {
+int mbedtls_net_connect(mbedtls_net_context *ctx, const char *host, const char *port, int proto) {
   int ret;
   ocall_mbedtls_net_connect(&ret, ctx, host, port, proto);
   return (ret);
@@ -96,7 +96,7 @@ int mbedtls_net_connect_ocall(mbedtls_net_context *ctx, const char *host, const 
 /*
  * Create a listening socket on bind_ip:port
  */
-int mbedtls_net_bind_ocall(mbedtls_net_context *ctx, const char *bind_ip, const char *port, int proto) {
+int mbedtls_net_bind(mbedtls_net_context *ctx, const char *bind_ip, const char *port, int proto) {
   int ret;
   ocall_mbedtls_net_bind(&ret, ctx, bind_ip, port, proto);
   return (ret);
@@ -107,7 +107,7 @@ int mbedtls_net_bind_ocall(mbedtls_net_context *ctx, const char *bind_ip, const 
 /*
  * Accept a connection from a remote client
  */
-int mbedtls_net_accept_ocall(mbedtls_net_context *bind_ctx,
+int mbedtls_net_accept(mbedtls_net_context *bind_ctx,
                              mbedtls_net_context *client_ctx,
                              void *client_ip, size_t buf_size, size_t *ip_len) {
   int ret;
@@ -125,13 +125,13 @@ int mbedtls_net_accept_ocall(mbedtls_net_context *bind_ctx,
 /*
  * Set the socket blocking or non-blocking
  */
-int mbedtls_net_set_block_ocall(mbedtls_net_context *ctx) {
+int mbedtls_net_set_block(mbedtls_net_context *ctx) {
   int ret;
   ocall_mbedtls_net_set_block(&ret, ctx);
   return ret;
 }
 
-int mbedtls_net_set_nonblock_ocall(mbedtls_net_context *ctx) {
+int mbedtls_net_set_nonblock(mbedtls_net_context *ctx) {
   int ret;
   ocall_mbedtls_net_set_nonblock(&ret, ctx);
   return ret;
@@ -140,14 +140,14 @@ int mbedtls_net_set_nonblock_ocall(mbedtls_net_context *ctx) {
 /*
  * Portable usleep helper
  */
-void mbedtls_net_usleep_ocall(unsigned long usec) {
+void mbedtls_net_usleep(unsigned long usec) {
   ocall_mbedtls_net_usleep(usec);
 }
 
 /*
  * Read at most 'len' characters
  */
-int mbedtls_net_recv_ocall(void *ctx, unsigned char *buf, size_t len) {
+int mbedtls_net_recv(void *ctx, unsigned char *buf, size_t len) {
   int ret;
   sgx_status_t ocall_ret;
   ocall_ret = ocall_mbedtls_net_recv(&ret, (mbedtls_net_context *) ctx, buf, len);
@@ -160,7 +160,7 @@ int mbedtls_net_recv_ocall(void *ctx, unsigned char *buf, size_t len) {
 /*
  * Read at most 'len' characters, blocking for at most 'timeout' ms
  */
-int mbedtls_net_recv_timeout_ocall(void *ctx, unsigned char *buf, size_t len,
+int mbedtls_net_recv_timeout(void *ctx, unsigned char *buf, size_t len,
                                    uint32_t timeout) {
   int ret;
   ocall_mbedtls_net_recv_timeout(&ret, (mbedtls_net_context *) ctx, buf, len, timeout);
@@ -170,7 +170,7 @@ int mbedtls_net_recv_timeout_ocall(void *ctx, unsigned char *buf, size_t len,
 /*
  * Write at most 'len' characters
  */
-int mbedtls_net_send_ocall(void *ctx, const unsigned char *buf, size_t len) {
+int mbedtls_net_send(void *ctx, const unsigned char *buf, size_t len) {
   int ret;
   ocall_mbedtls_net_send(&ret, (mbedtls_net_context *) ctx, buf, len);
   return ret;
@@ -179,7 +179,7 @@ int mbedtls_net_send_ocall(void *ctx, const unsigned char *buf, size_t len) {
 /*
  * Gracefully close the connection
  */
-void mbedtls_net_free_ocall(mbedtls_net_context *ctx) {
+void mbedtls_net_free(mbedtls_net_context *ctx) {
   sgx_status_t ret;
   ret = ocall_mbedtls_net_free((mbedtls_net_context *) ctx);
   if (ret != SGX_SUCCESS) {

@@ -431,7 +431,7 @@ static int my_recv( void *ctx, unsigned char *buf, size_t len )
         return( MBEDTLS_ERR_SSL_WANT_READ );
     }
 
-    ret = mbedtls_net_recv_ocall( ctx, buf, len );
+    ret = mbedtls_net_recv( ctx, buf, len );
     if( ret != MBEDTLS_ERR_SSL_WANT_READ )
         first_try = 1; /* Next call will be a new operation */
     return( ret );
@@ -448,7 +448,7 @@ static int my_send( void *ctx, const unsigned char *buf, size_t len )
         return( MBEDTLS_ERR_SSL_WANT_WRITE );
     }
 
-    ret = mbedtls_net_send_ocall( ctx, buf, len );
+    ret = mbedtls_net_send( ctx, buf, len );
     if( ret != MBEDTLS_ERR_SSL_WANT_WRITE )
         first_try = 1; /* Next call will be a new operation */
     return( ret );
@@ -771,8 +771,8 @@ void term_handler( int sig )
 {
     ((void) sig);
     received_sigterm = 1;
-    mbedtls_net_free_ocall( &listen_fd ); /* causes mbedtls_net_accept() to abort */
-    mbedtls_net_free_ocall( &client_fd ); /* causes net_read() to abort */
+    mbedtls_net_free( &listen_fd ); /* causes mbedtls_net_accept() to abort */
+    mbedtls_net_free( &client_fd ); /* causes net_read() to abort */
 }
 #endif
 
@@ -842,8 +842,8 @@ int ssl_server()
     /*
      * Make sure memory references are valid in case we exit early.
      */
-    mbedtls_net_init_ocall( &client_fd );
-    mbedtls_net_init_ocall( &listen_fd );
+    mbedtls_net_init( &client_fd );
+    mbedtls_net_init( &listen_fd );
     mbedtls_ssl_init( &ssl );
     mbedtls_ssl_config_init( &conf );
     mbedtls_ctr_drbg_init( &ctr_drbg );
@@ -1559,7 +1559,7 @@ int ssl_server()
             opt.server_addr ? opt.server_addr : "*",
             opt.server_port );
 
-    if( ( ret = mbedtls_net_bind_ocall( &listen_fd, opt.server_addr, opt.server_port,
+    if( ( ret = mbedtls_net_bind( &listen_fd, opt.server_addr, opt.server_port,
                           opt.transport == MBEDTLS_SSL_TRANSPORT_STREAM ?
                           MBEDTLS_NET_PROTO_TCP : MBEDTLS_NET_PROTO_UDP ) ) != 0 )
     {
@@ -1809,8 +1809,8 @@ int ssl_server()
     if( opt.nbio == 2 )
         mbedtls_ssl_set_bio( &ssl, &client_fd, my_send, my_recv, NULL );
     else
-        mbedtls_ssl_set_bio( &ssl, &client_fd, mbedtls_net_send_ocall, mbedtls_net_recv_ocall,
-                             opt.nbio == 0 ? mbedtls_net_recv_timeout_ocall : NULL );
+        mbedtls_ssl_set_bio( &ssl, &client_fd, mbedtls_net_send, mbedtls_net_recv,
+                             opt.nbio == 0 ? mbedtls_net_recv_timeout : NULL );
 
 #if defined(MBEDTLS_TIMING_C)
     mbedtls_ssl_set_timer_cb( &ssl, &timer, mbedtls_timing_set_delay,
@@ -1844,7 +1844,7 @@ reset:
     }
 #endif
 
-    mbedtls_net_free_ocall( &client_fd );
+    mbedtls_net_free( &client_fd );
 
     mbedtls_ssl_session_reset( &ssl );
 
@@ -1853,7 +1853,7 @@ reset:
      */
     mbedtls_printf( "  . Waiting for a remote connection ..." );
 
-    if( ( ret = mbedtls_net_accept_ocall( &listen_fd, &client_fd,
+    if( ( ret = mbedtls_net_accept( &listen_fd, &client_fd,
                     client_ip, sizeof( client_ip ), &cliip_len ) ) != 0 )
     {
 #if !defined(_WIN32)
@@ -1870,9 +1870,9 @@ reset:
     }
 
     if( opt.nbio > 0 )
-        ret = mbedtls_net_set_nonblock_ocall( &client_fd );
+        ret = mbedtls_net_set_nonblock( &client_fd );
     else
-        ret = mbedtls_net_set_block_ocall( &client_fd );
+        ret = mbedtls_net_set_block( &client_fd );
     if( ret != 0 )
     {
         mbedtls_printf( " failed\n  ! net_set_(non)block() returned -0x%x\n\n", -ret );
@@ -2262,8 +2262,8 @@ exit:
 
     mbedtls_printf( "  . Cleaning up..." );
 
-    mbedtls_net_free_ocall( &client_fd );
-    mbedtls_net_free_ocall( &listen_fd );
+    mbedtls_net_free( &client_fd );
+    mbedtls_net_free( &listen_fd );
 
 #if defined(MBEDTLS_DHM_C) && defined(MBEDTLS_FS_IO)
     mbedtls_dhm_free( &dhm );

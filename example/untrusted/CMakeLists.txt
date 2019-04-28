@@ -18,7 +18,7 @@ add_custom_command(
 
 add_executable(s_client ${CLIENT_SRC_FILES})
 add_executable(s_server Enclave_u.c s_server.cpp Utils.cpp)
-add_executable(m_server m_server.cpp mbedtls_net.c mbedtls_error.c Enclave_u.c Utils.cpp)
+add_executable(m_server m_server.cpp mbedtls_error.c Enclave_u.c Utils.cpp)
 
 include_directories(
         ${SGXSDK_INCLUDE_DIRS}

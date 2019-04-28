@@ -175,7 +175,7 @@ void TLSConnectionHandler::handle(long int thread_id, thread_info_t *thread_info
   }
 
   mbedtls_printf("client_fd is %d\n", client_fd->fd);
-  mbedtls_ssl_set_bio(&ssl, client_fd, mbedtls_net_send_ocall, mbedtls_net_recv_ocall, NULL);
+  mbedtls_ssl_set_bio(&ssl, client_fd, mbedtls_net_send, mbedtls_net_recv, NULL);
 
   /*
    * 5. Handshake

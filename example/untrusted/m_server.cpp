@@ -57,8 +57,6 @@ typedef struct {
 static pthread_info_t threads[MAX_NUM_THREADS];
 sgx_enclave_id_t eid;
 
-#include "mbedtls_net.c"
-
 // thread function
 void *ecall_handle_ssl_connection(void *data) {
   long int thread_id = pthread_self();
@@ -66,7 +64,7 @@ void *ecall_handle_ssl_connection(void *data) {
   ssl_conn_handle(eid, thread_id, thread_info);
 
   cerr << "thread exiting for thread " << thread_id << endl;
-  mbedtls_net_free(&thread_info->client_fd);
+  ocall_mbedtls_net_free(&thread_info->client_fd);
   return (NULL);
 }
 
@@ -122,8 +120,8 @@ int main(void) {
   mbedtls_printf("  . Bind on https://localhost:4433/ ...");
   fflush(stdout);
 
-  if ((ret = mbedtls_net_bind(&listen_fd, NULL, "4433", MBEDTLS_NET_PROTO_TCP)) != 0) {
-    mbedtls_printf(" failed\n  ! mbedtls_net_bind returned %d\n\n", ret);
+  if ((ret = ocall_mbedtls_net_bind(&listen_fd, NULL, "4433", MBEDTLS_NET_PROTO_TCP)) != 0) {
+    mbedtls_printf(" failed\n  ! ocall_mbedtls_net_bind returned %d\n\n", ret);
     std::exit(-1);
   }
 
@@ -152,15 +150,15 @@ int main(void) {
      * 3. Wait until a client connects
      */
 
-    if (0 != mbedtls_net_set_nonblock(&listen_fd)) {
+    if (0 != ocall_mbedtls_net_set_nonblock(&listen_fd)) {
       cerr << "can't set nonblock for the listen socket" << endl;
     }
-    ret = mbedtls_net_accept(&listen_fd, &client_fd, NULL, 0, NULL);
+    ret = ocall_mbedtls_net_accept(&listen_fd, &client_fd, NULL, 0, NULL);
     if (ret == MBEDTLS_ERR_SSL_WANT_READ) {
       ret = 0;
       continue;
     } else if (ret != 0) {
-      mbedtls_printf("  [ main ] failed: mbedtls_net_accept returned -0x%04x\n", ret);
+      mbedtls_printf("  [ main ] failed: ocall_mbedtls_net_accept returned -0x%04x\n", ret);
       break;
     }
 
@@ -169,7 +167,7 @@ int main(void) {
 
     if ((ret = thread_create(&client_fd)) != 0) {
       mbedtls_printf("  [ main ]  failed: thread_create returned %d\n", ret);
-      mbedtls_net_free(&client_fd);
+      ocall_mbedtls_net_free(&client_fd);
       continue;
     }
     ret = 0;
