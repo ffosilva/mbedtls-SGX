@@ -12,7 +12,7 @@ add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.
 add_subdirectory(mbedtls/include)
 
 include_directories(
-    $(CMAKE_CURRENT_SOURCE_DIR)
+    $(CMAKE_CURRENT_SOURCE_DIR)/include
     mbedtls/include
     ${SGX_SDK}/include
     ${SGX_SDK}/include/tlibc
@@ -36,4 +36,10 @@ install(TARGETS ${PROJECT_NAME}_t
 
 install(FILES ${PROJECT_NAME}.edl
     DESTINATION lib
+    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+
+file(GLOB MBEDTLS_SGX_COMPAT_HEADERS "include/*.h")
+
+install(FILES ${MBEDTLS_SGX_COMPAT_HEADERS}
+    DESTINATION include/mbedtls
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)

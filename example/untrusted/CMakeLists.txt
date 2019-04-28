@@ -23,6 +23,7 @@ add_executable(m_server m_server.cpp mbedtls_error.c Enclave_u.c Utils.cpp)
 include_directories(
         ${SGXSDK_INCLUDE_DIRS}
         ${CMAKE_SOURCE_DIR}/include
+	${CMAKE_SOURCE_DIR}/trusted/include
 )
 
 target_link_libraries(s_client
