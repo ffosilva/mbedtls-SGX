@@ -1,4 +1,7 @@
+set(MBEDTLS_SGX_SRC_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/include)
+
 FILE(GLOB MBEDTLS_SGX_SRC_FILES mbedtls/library/*.c)
+FILE(GLOB MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/*.h)
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}_t.c
@@ -9,7 +12,11 @@ add_custom_command(
 
 add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c glue.c dummy.c net_sockets_proxy.c)
 
-add_subdirectory(mbedtls/include)
+list(REMOVE_ITEM MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/config.h)
+
+install(FILES ${MBEDTLS_SGX_SRC_HEADERS}
+    DESTINATION include/mbedtls
+    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
 include_directories(
     $(CMAKE_CURRENT_SOURCE_DIR)/include
@@ -38,8 +45,11 @@ install(FILES ${PROJECT_NAME}.edl
     DESTINATION lib
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
-file(GLOB MBEDTLS_SGX_COMPAT_HEADERS "include/*.h")
-
-install(FILES ${MBEDTLS_SGX_COMPAT_HEADERS}
+install(FILES include/glue.h
     DESTINATION include/mbedtls
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+
+install(FILES include/config-sgx.h
+    DESTINATION include/mbedtls
+    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+    RENAME config.h)
