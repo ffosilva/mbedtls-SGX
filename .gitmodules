@@ -1,0 +1,3 @@
+[submodule "trusted/mbedtls"]
+	path = trusted/mbedtls
+	url = http://github.com/armmbed/mbedtls.git
