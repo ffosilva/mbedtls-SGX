@@ -24,6 +24,7 @@ add_library(enclave SHARED ${SOURCE_FILES})
 
 include_directories(
         $(CMAKE_CURRENT_SOURCE_DIR)
+	${CMAKE_SOURCE_DIR}/trusted/config
 	${CMAKE_SOURCE_DIR}/trusted/include
         ${CMAKE_SOURCE_DIR}/include
         ${SGX_SDK}/include
