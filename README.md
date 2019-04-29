@@ -1,18 +1,19 @@
-# mbedtls-SGX: a TLS stack in SGX
+# mbedtls-compat-sgx: mbed TLS Intel(r) SGX Compatibility Layer
 
-mbedtls-SGX is a port of [mbedtls](https://github.com/ARMmbed/mbedtls) (previously PolarSSL) to Intel-SGX. mbedtls-SGX aims to preserve **all** of the [features of mbedtls](https://tls.mbed.org/core-features). With mbedtls-SGX, you can
+mbedtls-compat-sgx is a compatibility layer for [mbedtls](https://github.com/ARMmbed/mbedtls) (previously PolarSSL) to Intel(r) SGX. mbedtls-compat-sgx aims to preserve **all** of the [features of mbedtls](https://tls.mbed.org/core-features). With mbed TLS inside enclaves, you can
 
 - use a wide array of cryptographic primitives (hash, RSA, ECC, AES, etc) in SGX.
 - build SGX-secured tls clients and servers -- even OS cannot access session secrets.
-- enjoy the awesome [documentation](https://tls.mbed.org/kb) and clean [API](https://tls.mbed.org/api/) of mbedtls.
+- transparent multithread support.
+- enjoy the awesome [documentation](https://tls.mbed.org/kb) and clean [API](https://tls.mbed.org/api/) of mbedtls TLS.
 
-In addition, mbedtls-SGX comes with [examples](https://github.com/bl4ck5un/mbedtls-SGX/tree/master/example) to help you get started. Note that certain functionality is lost due to limitations of SGX. Read on for details.
+In addition, mbedtls-compat-sgx comes with [examples](https://github.com/ffosilva/mbedtls-compat-sgx/tree/master/example) to help you get started. Note that certain functionality is lost due to limitations of SGX. Read on for details.
 
 # Usage and Examples
 
-mbedtls-SGX is a static enclave library. General steps of using mbedtls-SGX in your project are:
+mbedtls-compat-sgx is a static enclave library. General steps of using mbedtls-SGX in your project are:
 
-- compile and install mbedtls-SGX (see below)
+- compile and install mbedtls-compat-sgx (see below)
 - include `trusted/mbedtls_sgx.edl` in your enclave's EDL file.
 - make sure your compiler can find the headers in `include`.
 - link `libmbedtls_sgx_u.a` to the untrusted part of your application
@@ -25,7 +26,7 @@ mbedtls-SGX is a static enclave library. General steps of using mbedtls-SGX in y
 ## Build
 
 ```
-git clone https://github.com/bl4ck5un/mbedtls-SGX && cd mbedtls-SGX
+git clone https://github.com/ffosilva/mbedtls-compat-sgx.git --recursive && cd mbedtls-compat-sgx
 mkdir build && cd build
 cmake ..
 make -j && make install
@@ -68,4 +69,4 @@ Due to SGX's contraints, some features have been turned off.
 
 # License
 
-mbedtls-SGX is open source under Apache 2.0. See LICENSE for more details.
+mbedtls-compat-sgx is open source under Apache 2.0. See LICENSE for more details.
