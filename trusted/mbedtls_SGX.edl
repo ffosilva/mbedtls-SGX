@@ -16,6 +16,7 @@ enclave {
         int ocall_mbedtls_net_accept( [in] mbedtls_net_context *bind_ctx, [out] mbedtls_net_context *client_ctx, [out, size=buf_size] void *client_ip, size_t buf_size, [out] size_t *ip_len );
         int ocall_mbedtls_net_set_block([in,out] mbedtls_net_context *ctx );
         int ocall_mbedtls_net_set_nonblock( [in,out] mbedtls_net_context *ctx );
+        int ocall_mbedtls_net_poll( [in,out] mbedtls_net_context *ctx, uint32_t rw, uint32_t timeout );
         void ocall_mbedtls_net_usleep( unsigned long usec );
         int ocall_mbedtls_net_recv( [in,out] mbedtls_net_context *ctx, [out, size=len] unsigned char *buf, size_t len );
         int ocall_mbedtls_net_send( [in,out] mbedtls_net_context *ctx, [in, size=len] const unsigned char *buf, size_t len );

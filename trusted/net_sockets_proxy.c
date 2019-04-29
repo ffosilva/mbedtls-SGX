@@ -167,6 +167,23 @@ int mbedtls_net_set_nonblock(mbedtls_net_context *ctx) {
 }
 
 /*
+ * Check if data is available on the socket
+ */
+
+int mbedtls_net_poll( mbedtls_net_context *ctx, uint32_t rw, uint32_t timeout )
+{
+  int ret;
+  sgx_status_t ocall_ret;
+
+  ocall_ret = ocall_mbedtls_net_poll( &ret, ctx, rw, timeout );
+  if (SGX_SUCCESS != ocall_ret) {
+    mbedtls_printf("ocall_mbedtls_net_poll returned %#x\n", ocall_ret);
+  }
+
+  return ret;
+}
+
+/*
  * Portable usleep helper
  */
 void mbedtls_net_usleep(unsigned long usec) {
