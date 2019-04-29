@@ -37,6 +37,10 @@
 #define mbedtls_printf     printf
 #endif
 
+#if defined(MBEDTLS_THREADING_C)
+#include "mbedtls/threading.h"
+#endif
+
 #if !defined(MBEDTLS_ENTROPY_C) || \
     !defined(MBEDTLS_SSL_TLS_C) || !defined(MBEDTLS_SSL_SRV_C) || \
     !defined(MBEDTLS_CTR_DRBG_C)
@@ -778,6 +782,9 @@ void term_handler( int sig )
 
 int ssl_server()
 {
+#ifdef MBEDTLS_THREADING_ALT
+    mbedtls_threading_set_alt(threading_mutex_init_sgx, threading_mutex_free_sgx, threading_mutex_lock_sgx, threading_mutex_unlock_sgx);
+#endif
     int ret = 0, len, written, frags, exchanges_left;
     int version_suites[4][2];
     unsigned char buf[IO_BUF_LEN];

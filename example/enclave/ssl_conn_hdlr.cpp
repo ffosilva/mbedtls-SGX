@@ -3,10 +3,14 @@
 #include <exception>
 #include <mbedtls/net.h>
 #include <mbedtls/debug.h>
-#include <mbedtls/threading.h>
+#if defined(MBEDTLS_THREADING_C)
+#include "mbedtls/threading.h"
+#endif
 
 TLSConnectionHandler::TLSConnectionHandler() {
-  mbedtls_threading_set_alt(threading_mutex_init_sgx, threading_mutex_free_sgx, threading_mutex_lock_sgx, threading_mutex_unlock_sgx);
+#ifdef MBEDTLS_THREADING_ALT
+    mbedtls_threading_set_alt(threading_mutex_init_sgx, threading_mutex_free_sgx, threading_mutex_lock_sgx, threading_mutex_unlock_sgx);
+#endif
 
   int ret;
 
