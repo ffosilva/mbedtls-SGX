@@ -2,10 +2,10 @@
 
 mbedtls-compat-sgx is a compatibility layer for [mbedtls](https://github.com/ARMmbed/mbedtls) (previously PolarSSL) to Intel(r) SGX. mbedtls-compat-sgx aims to preserve **all** of the [features of mbedtls](https://tls.mbed.org/core-features). With mbed TLS inside enclaves, you can
 
-- use a wide array of cryptographic primitives (hash, RSA, ECC, AES, etc) in SGX.
-- build SGX-secured tls clients and servers -- even OS cannot access session secrets.
-- transparent multithread support.
-- enjoy the awesome [documentation](https://tls.mbed.org/kb) and clean [API](https://tls.mbed.org/api/) of mbedtls TLS.
+- use a wide array of cryptographic primitives (hash, RSA, ECC, AES, etc).
+- build SGX-secured TLS clients and servers -- even OS cannot access session secrets.
+- SGX multithread support.
+- enjoy the awesome [documentation](https://tls.mbed.org/kb) and clean [API](https://tls.mbed.org/api/) of mbed TLS.
 
 In addition, mbedtls-compat-sgx comes with [examples](https://github.com/ffosilva/mbedtls-compat-sgx/tree/master/example) to help you get started. Note that certain functionality is lost due to limitations of SGX. Read on for details.
 
@@ -32,10 +32,10 @@ cmake ..
 make -j && make install
 ```
 
-Include the resultant `mbedtls_SGX-2.6.0` as part of your project.
+Include the resultant `mbedtls_SGX-2.16.1` as part of your project.
 
 ```
-mbedtls_SGX-2.6.0
+mbedtls_SGX-2.16.1
 ├── include
 │   └── mbedtls
 └── lib

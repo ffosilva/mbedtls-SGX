@@ -108,30 +108,6 @@ static int wsa_init_done = 0;
 #include <stdint.h>
 
 /*
- * Compatibility post-2.6.x - must be removed on next release
- */
-
-#ifndef MBEDTLS_ERR_NET_POLL_FAILED
-#define MBEDTLS_ERR_NET_POLL_FAILED                       -0x0047  /**< Polling the net context failed. */
-#endif
-
-#ifndef MBEDTLS_ERR_NET_BAD_INPUT_DATA
-#define MBEDTLS_ERR_NET_BAD_INPUT_DATA                    -0x0049  /**< Input invalid. */
-#endif
-
-#ifndef MBEDTLS_NET_POLL_READ
-#define MBEDTLS_NET_POLL_READ  1 /**< Used in \c mbedtls_net_poll to check for pending data  */
-#endif
-
-#ifndef MBEDTLS_NET_POLL_WRITE
-#define MBEDTLS_NET_POLL_WRITE 2 /**< Used in \c mbedtls_net_poll to check if write possible */
-#endif
-
-/*
- * End - compatibility post-2.6.x
- */
-
-/*
  * Prepare for using the sockets interface
  */
 static int net_prepare( void )
