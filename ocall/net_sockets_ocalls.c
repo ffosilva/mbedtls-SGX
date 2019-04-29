@@ -25,7 +25,18 @@
 #include MBEDTLS_CONFIG_FILE
 #endif
 
-#include "mbedtls/net.h"
+#if !defined(unix) && !defined(__unix__) && !defined(__unix) && \
+    !defined(__APPLE__) && !defined(_WIN32)
+#error "This module only works on Unix and Windows, see MBEDTLS_NET_C in config.h"
+#endif
+
+#if defined(MBEDTLS_PLATFORM_C)
+#include "mbedtls/platform.h"
+#else
+#include <stdlib.h>
+#endif
+
+#include "mbedtls/net_sockets.h"
 
 #include <string.h>
 
@@ -79,9 +90,10 @@ static int wsa_init_done = 0;
 #define MSVC_INT_CAST
 #endif
 
-#include <stdlib.h>
 #include <stdio.h>
+
 #include <time.h>
+
 #include <stdint.h>
 
 /*
@@ -111,8 +123,10 @@ static int net_prepare( void )
 /*
  * Initialize a context
  */
-// deleted mbedtls_net_init
-
+void ocall_mbedtls_net_init( mbedtls_net_context *ctx )
+{
+    ctx->fd = -1;
+}
 
 /*
  * Initiate a TCP connection with host:port and the given protocol
@@ -222,7 +236,7 @@ int ocall_mbedtls_net_bind( mbedtls_net_context *ctx, const char *bind_ip, const
             }
         }
 
-        /* I we ever get there, it's a success */
+        /* Bind was successful */
         ret = 0;
         break;
     }
