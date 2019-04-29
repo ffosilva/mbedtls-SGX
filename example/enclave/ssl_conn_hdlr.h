@@ -54,7 +54,6 @@ class TLSConnectionHandler {
    * static members
    */
   const static string pers;
-  static sgx_thread_mutex_t mutex;
 
   /*
    * global server state

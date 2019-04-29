@@ -3,8 +3,11 @@
 #include <exception>
 #include <mbedtls/net.h>
 #include <mbedtls/debug.h>
+#include <mbedtls/threading.h>
 
 TLSConnectionHandler::TLSConnectionHandler() {
+  mbedtls_threading_set_alt(threading_mutex_init_sgx, threading_mutex_free_sgx, threading_mutex_lock_sgx, threading_mutex_unlock_sgx);
+
   int ret;
 
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
@@ -135,8 +138,6 @@ TLSConnectionHandler::~TLSConnectionHandler() {
   mbedtls_ctr_drbg_free(&ctr_drbg);
   mbedtls_entropy_free(&entropy);
   mbedtls_ssl_config_free(&conf);
-
-  sgx_thread_mutex_destroy(&mutex);
 
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
   mbedtls_memory_buffer_alloc_free();
@@ -290,7 +291,6 @@ void TLSConnectionHandler::handle(long int thread_id, thread_info_t *thread_info
 }
 
 const string TLSConnectionHandler::pers = "ssl_pthread_server";
-sgx_thread_mutex_t TLSConnectionHandler::mutex = SGX_THREAD_MUTEX_INITIALIZER;
 
 void TLSConnectionHandler::mydebug(void *ctx, int level,
                                    const char *file, int line,
@@ -298,10 +298,7 @@ void TLSConnectionHandler::mydebug(void *ctx, int level,
   (void) ctx;
   (void) level;
   long int thread_id = 0;
-  sgx_thread_mutex_lock(&mutex);
 
   mbedtls_printf("%s:%04d: [ #%ld ] %s",
                  file, line, thread_id, str);
-
-  sgx_thread_mutex_unlock(&mutex);
 }

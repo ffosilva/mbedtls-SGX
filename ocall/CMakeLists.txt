@@ -6,7 +6,8 @@ add_library(${PROJECT_NAME}_u STATIC net_ocalls.c std_ocalls.c)
 include_directories(
     ../trusted/config
     ../trusted/include
-    ../trusted/mbedtls/include)
+    ../trusted/mbedtls/include
+    ${SGX_SDK}/include)
 
 install(TARGETS ${PROJECT_NAME}_u
     DESTINATION lib
