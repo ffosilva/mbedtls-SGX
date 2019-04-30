@@ -17,7 +17,7 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${MBEDTLS_VERSION})
 
 set(MBEDTLS_LIB_DIR ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
 
-add_compile_definitions(MBEDTLS_CONFIG_FILE=<config-sgx.h>)
+add_definitions(-DMBEDTLS_CONFIG_FILE=<config-sgx.h>)
 
 add_subdirectory(trusted)
 add_subdirectory(ocall)
