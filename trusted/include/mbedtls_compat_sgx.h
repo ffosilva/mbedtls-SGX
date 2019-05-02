@@ -17,7 +17,8 @@
  *     Fan Zhang <bl4ck5unxx@gmail.com>
  */
 
-#pragma once
+#ifndef MBEDTLS_COMPAT_SGX_H
+#define MBEDTLS_COMPAT_SGX_H
 
 #define _vsnprintf vsnprintf
 #include <stdio.h>      /* vsnprintf */
@@ -34,3 +35,4 @@ int rand();
 #if defined(__cplusplus)
 }
 #endif
+#endif /* MBEDTLS_COMPAT_SGX_H */

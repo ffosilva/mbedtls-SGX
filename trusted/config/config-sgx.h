@@ -33,6 +33,8 @@
 #define _CRT_SECURE_NO_DEPRECATE 1
 #endif
 
+#include "mbedtls_compat_sgx.h"
+
 /**
  * \name SECTION: System support
  *
@@ -3052,7 +3054,6 @@
 //#define MBEDTLS_PLATFORM_TIME_MACRO            time /**< Default time macro to use, can be undefined. MBEDTLS_HAVE_TIME must be enabled */
 //#define MBEDTLS_PLATFORM_TIME_TYPE_MACRO       time_t /**< Default time macro to use, can be undefined. MBEDTLS_HAVE_TIME must be enabled */
 //#define MBEDTLS_PLATFORM_FPRINTF_MACRO      fprintf /**< Default fprintf macro to use, can be undefined */
-#include "glue.h"
 #define MBEDTLS_PLATFORM_PRINTF_MACRO        printf_sgx /**< Default printf macro to use, can be undefined */
 /* Note: your snprintf must correclty zero-terminate the buffer! */
 //#define MBEDTLS_PLATFORM_SNPRINTF_MACRO    snprintf /**< Default snprintf macro to use, can be undefined */
