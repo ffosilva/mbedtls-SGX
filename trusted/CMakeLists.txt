@@ -11,7 +11,7 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c threading_alt.c glue.c dummy.c net_sockets_proxy.c)
+add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c threading_alt.c mbedtls_compat_sgx.c dummy.c net_sockets_proxy.c)
 
 list(REMOVE_ITEM MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/config.h)
 
