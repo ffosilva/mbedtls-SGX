@@ -41,3 +41,13 @@ int threading_mutex_unlock_sgx(mbedtls_threading_mutex_t *mutex)
 
     return (0);
 }
+
+void (*mbedtls_mutex_init)( mbedtls_threading_mutex_t * ) = threading_mutex_init_sgx;
+void (*mbedtls_mutex_free)( mbedtls_threading_mutex_t * ) = threading_mutex_free_sgx;
+int (*mbedtls_mutex_lock)( mbedtls_threading_mutex_t * ) = threading_mutex_lock_sgx;
+int (*mbedtls_mutex_unlock)( mbedtls_threading_mutex_t * ) = threading_mutex_unlock_sgx;
+
+/*
+ * With SGX we can statically initialize mutexes
+ */
+#define MUTEX_INIT  = { SGX_THREAD_MUTEX_INITIALIZER, 1 }
