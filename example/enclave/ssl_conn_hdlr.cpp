@@ -8,9 +8,6 @@
 #endif
 
 TLSConnectionHandler::TLSConnectionHandler() {
-#ifdef MBEDTLS_THREADING_ALT
-    mbedtls_threading_set_alt(threading_mutex_init_sgx, threading_mutex_free_sgx, threading_mutex_lock_sgx, threading_mutex_unlock_sgx);
-#endif
 
   int ret;
 

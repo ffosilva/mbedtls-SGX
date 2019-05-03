@@ -782,9 +782,6 @@ void term_handler( int sig )
 
 int ssl_server()
 {
-#ifdef MBEDTLS_THREADING_ALT
-    mbedtls_threading_set_alt(threading_mutex_init_sgx, threading_mutex_free_sgx, threading_mutex_lock_sgx, threading_mutex_unlock_sgx);
-#endif
     int ret = 0, len, written, frags, exchanges_left;
     int version_suites[4][2];
     unsigned char buf[IO_BUF_LEN];

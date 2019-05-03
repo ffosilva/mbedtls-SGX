@@ -315,9 +315,6 @@ static int my_verify( void *data, mbedtls_x509_crt *crt, int depth, uint32_t *fl
 
 int ssl_client(client_opt_t opt, char* headers[], int n_header, unsigned char* output, int length)
 {
-#ifdef MBEDTLS_THREADING_ALT
-    mbedtls_threading_set_alt(threading_mutex_init_sgx, threading_mutex_free_sgx, threading_mutex_lock_sgx, threading_mutex_unlock_sgx);
-#endif
     int ret = 0, len, tail_len, i, written, frags, retry_left;
     mbedtls_net_context server_fd;
     unsigned char buf[MBEDTLS_SSL_MAX_CONTENT_LEN + 1];
