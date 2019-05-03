@@ -25,11 +25,18 @@ mbedtls-compat-sgx is a static enclave library. General steps of using mbedtls-S
 
 ## Build
 
+### Local environment
 ```
 git clone https://github.com/ffosilva/mbedtls-compat-sgx.git --recursive && cd mbedtls-compat-sgx
 mkdir build && cd build
 cmake ..
 make -j && make install
+```
+
+### Using Docker
+```
+git clone https://github.com/ffosilva/mbedtls-compat-sgx.git --recursive && cd mbedtls-compat-sgx
+make lib
 ```
 
 Include the resultant `mbedtls_SGX-2.16.1` as part of your project.
