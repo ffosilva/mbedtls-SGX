@@ -13,6 +13,9 @@ add_custom_command(
 
 add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c threading_alt.c mbedtls_compat_sgx.c dummy.c net_sockets_proxy.c)
 
+# Enable network errors handling by error.c
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/library/error.c PROPERTIES COMPILE_FLAGS -DMBEDTLS_NET_C)
+
 list(REMOVE_ITEM MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/config.h)
 
 install(FILES ${MBEDTLS_SGX_SRC_HEADERS}
