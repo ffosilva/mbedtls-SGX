@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 #pragma warning (disable: 4273)
-extern int printf_sgx(const char *fmt, ...);
+extern int mbedtls_compat_sgx_printf(const char *fmt, ...);
 #pragma warning (default: 4273) 
 
 enum {
@@ -40,14 +40,14 @@ extern const char * log_level_strings [];
     __pragma(warning (push)) \
     __pragma(warning (disable: 4127)) \
 	if ( LOG_SHOULD_I(level) ) { \
-		printf_sgx("[%s] %s:%d: " fmt "\n", log_level_strings[level], __FILE__,__LINE__, __VA_ARGS__); \
+		mbedtls_compat_sgx_printf("[%s] %s:%d: " fmt "\n", log_level_strings[level], __FILE__,__LINE__, __VA_ARGS__); \
 	} \
 } while(0) \
     __pragma(warning (pop))
 #else
 #define LOG(level, fmt, arg...) do {	\
 	if ( LOG_SHOULD_I(level) ) { \
-		printf_sgx("[%s] %s:%d: " fmt "\n", log_level_strings[level], __FUNCTION__,__LINE__, ##arg); \
+		mbedtls_compat_sgx_printf("[%s] %s:%d: " fmt "\n", log_level_strings[level], __FUNCTION__,__LINE__, ##arg); \
 	} \
 } while(0)
 #endif

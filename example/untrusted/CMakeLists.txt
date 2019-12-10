@@ -7,7 +7,7 @@ set_directory_properties(PROPERTIES
         ADDITIONAL_MAKE_CLEAN_FILES "Enclave_u.c; Enclave_u.h")
 
 add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Enclave_u.c
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Enclave_u.c ${CMAKE_CURRENT_SOURCE_DIR}/Enclave_u.h
         COMMAND ${SGX_EDGER8R} --untrusted Enclave.edl
         --search-path ../enclave/ # enclave.edl
         --search-path ${SGX_SDK}/include

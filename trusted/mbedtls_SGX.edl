@@ -23,6 +23,6 @@ enclave {
         void ocall_mbedtls_net_free( [in, out] mbedtls_net_context *ctx );
 
         // printf
-        int ocall_print_string([in, string] const char *str);
+        int ocall_mbedtls_compat_sgx_print_string([in, string] const char *str);
     };
 };
