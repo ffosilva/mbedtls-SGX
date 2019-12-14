@@ -228,6 +228,7 @@
 //#define MBEDTLS_PLATFORM_FPRINTF_ALT
 //#define MBEDTLS_PLATFORM_PRINTF_ALT
 //#define MBEDTLS_PLATFORM_SNPRINTF_ALT
+//#define MBEDTLS_PLATFORM_VSNPRINTF_ALT
 //#define MBEDTLS_PLATFORM_NV_SEED_ALT
 //#define MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
 
@@ -278,51 +279,27 @@
  * For example, when a function accepts as input a pointer to a buffer that may
  * contain untrusted data, and its documentation mentions that this pointer
  * must not be NULL:
- * - The pointer is checked to be non-NULL only if this option is enabled.
- * - The content of the buffer is always validated.
+ * - the pointer is checked to be non-NULL only if this option is enabled
+ * - the content of the buffer is always validated
  *
  * When this flag is defined, if a library function receives a parameter that
- * is invalid:
- * 1. The function will invoke the macro MBEDTLS_PARAM_FAILED().
- * 2. If MBEDTLS_PARAM_FAILED() did not terminate the program, the function
- *   will immediately return. If the function returns an Mbed TLS error code,
- *   the error code in this case is MBEDTLS_ERR_xxx_BAD_INPUT_DATA.
+ * is invalid, it will:
+ * - invoke the macro MBEDTLS_PARAM_FAILED() which by default expands to a
+ *   call to the function mbedtls_param_failed()
+ * - immediately return (with a specific error code unless the function
+ *   returns void and can't communicate an error).
  *
- * When defining this flag, you also need to arrange a definition for
- * MBEDTLS_PARAM_FAILED(). You can do this by any of the following methods:
- * - By default, the library defines MBEDTLS_PARAM_FAILED() to call a
- *   function mbedtls_param_failed(), but the library does not define this
- *   function. If you do not make any other arrangements, you must provide
- *   the function mbedtls_param_failed() in your application.
- *   See `platform_util.h` for its prototype.
- * - If you enable the macro #MBEDTLS_CHECK_PARAMS_ASSERT, then the
- *   library defines #MBEDTLS_PARAM_FAILED(\c cond) to be `assert(cond)`.
- *   You can still supply an alternative definition of
- *   MBEDTLS_PARAM_FAILED(), which may call `assert`.
- * - If you define a macro MBEDTLS_PARAM_FAILED() before including `config.h`
- *   or you uncomment the definition of MBEDTLS_PARAM_FAILED() in `config.h`,
- *   the library will call the macro that you defined and will not supply
- *   its own version. Note that if MBEDTLS_PARAM_FAILED() calls `assert`,
- *   you need to enable #MBEDTLS_CHECK_PARAMS_ASSERT so that library source
- *   files include `<assert.h>`.
+ * When defining this flag, you also need to:
+ * - either provide a definition of the function mbedtls_param_failed() in
+ *   your application (see platform_util.h for its prototype) as the library
+ *   calls that function, but does not provide a default definition for it,
+ * - or provide a different definition of the macro MBEDTLS_PARAM_FAILED()
+ *   below if the above mechanism is not flexible enough to suit your needs.
+ *   See the documentation of this macro later in this file.
  *
  * Uncomment to enable validation of application-controlled parameters.
  */
 //#define MBEDTLS_CHECK_PARAMS
-
-/**
- * \def MBEDTLS_CHECK_PARAMS_ASSERT
- *
- * Allow MBEDTLS_PARAM_FAILED() to call `assert`, and make it default to
- * `assert`. This macro is only used if #MBEDTLS_CHECK_PARAMS is defined.
- *
- * If this macro is not defined, then MBEDTLS_PARAM_FAILED() defaults to
- * calling a function mbedtls_param_failed(). See the documentation of
- * #MBEDTLS_CHECK_PARAMS for details.
- *
- * Uncomment to allow MBEDTLS_PARAM_FAILED() to call `assert`.
- */
-//#define MBEDTLS_CHECK_PARAMS_ASSERT
 
 /* \} name SECTION: System support */
 
@@ -441,16 +418,6 @@
  *            constitutes a security risk. If possible, we recommend avoiding
  *            dependencies on them, and considering stronger message digests
  *            and ciphers instead.
- *
- * \warning   If both MBEDTLS_ECDSA_SIGN_ALT and MBEDTLS_ECDSA_DETERMINISTIC are
- *            enabled, then the deterministic ECDH signature functions pass the
- *            the static HMAC-DRBG as RNG to mbedtls_ecdsa_sign(). Therefore
- *            alternative implementations should use the RNG only for generating
- *            the ephemeral key and nothing else. If this is not possible, then
- *            MBEDTLS_ECDSA_DETERMINISTIC should be disabled and an alternative
- *            implementation should be provided for mbedtls_ecdsa_sign_det_ext()
- *            (and for mbedtls_ecdsa_sign_det() too if backward compatibility is
- *            desirable).
  *
  */
 //#define MBEDTLS_MD2_PROCESS_ALT
@@ -795,9 +762,38 @@
  *
  * \note  This option only works with the default software implementation of
  *        elliptic curve functionality. It is incompatible with
- *        MBEDTLS_ECP_ALT, MBEDTLS_ECDH_XXX_ALT and MBEDTLS_ECDSA_XXX_ALT.
+ *        MBEDTLS_ECP_ALT, MBEDTLS_ECDH_XXX_ALT, MBEDTLS_ECDSA_XXX_ALT
+ *        and MBEDTLS_ECDH_LEGACY_CONTEXT.
  */
 //#define MBEDTLS_ECP_RESTARTABLE
+
+/**
+ * \def MBEDTLS_ECDH_LEGACY_CONTEXT
+ *
+ * Use a backward compatible ECDH context.
+ *
+ * Mbed TLS supports two formats for ECDH contexts (#mbedtls_ecdh_context
+ * defined in `ecdh.h`). For most applications, the choice of format makes
+ * no difference, since all library functions can work with either format,
+ * except that the new format is incompatible with MBEDTLS_ECP_RESTARTABLE.
+
+ * The new format used when this option is disabled is smaller
+ * (56 bytes on a 32-bit platform). In future versions of the library, it
+ * will support alternative implementations of ECDH operations.
+ * The new format is incompatible with applications that access
+ * context fields directly and with restartable ECP operations.
+ *
+ * Define this macro if you enable MBEDTLS_ECP_RESTARTABLE or if you
+ * want to access ECDH context fields directly. Otherwise you should
+ * comment out this macro definition.
+ *
+ * This option has no effect if #MBEDTLS_ECDH_C is not enabled.
+ *
+ * \note This configuration option is experimental. Future versions of the
+ *       library may modify the way the ECDH context layout is configured
+ *       and may modify the layout of the new context type.
+ */
+#define MBEDTLS_ECDH_LEGACY_CONTEXT
 
 /**
  * \def MBEDTLS_ECDSA_DETERMINISTIC
@@ -1258,6 +1254,33 @@
 #define MBEDTLS_PKCS1_V21
 
 /**
+ * \def MBEDTLS_PSA_CRYPTO_SPM
+ *
+ * When MBEDTLS_PSA_CRYPTO_SPM is defined, the code is built for SPM (Secure
+ * Partition Manager) integration which separates the code into two parts: a
+ * NSPE (Non-Secure Process Environment) and an SPE (Secure Process
+ * Environment).
+ *
+ * Module:  library/psa_crypto.c
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ *
+ */
+//#define MBEDTLS_PSA_CRYPTO_SPM
+
+/**
+ * \def MBEDTLS_PSA_INJECT_ENTROPY
+ *
+ * Enable support for entropy injection at first boot. This feature is
+ * required on systems that do not have a built-in entropy source (TRNG).
+ * This feature is currently not supported on systems that have a built-in
+ * entropy source.
+ *
+ * Requires: MBEDTLS_PSA_CRYPTO_STORAGE_C, MBEDTLS_ENTROPY_NV_SEED
+ *
+ */
+//#define MBEDTLS_PSA_INJECT_ENTROPY
+
+/**
  * \def MBEDTLS_RSA_NO_CRT
  *
  * Do not use the Chinese Remainder Theorem
@@ -1304,6 +1327,34 @@
  * Enable sending of all alert messages
  */
 #define MBEDTLS_SSL_ALL_ALERT_MESSAGES
+
+/**
+ * \def MBEDTLS_SSL_DTLS_CONNECTION_ID
+ *
+ * Enable support for the DTLS Connection ID extension
+ * (version draft-ietf-tls-dtls-connection-id-05,
+ * https://tools.ietf.org/html/draft-ietf-tls-dtls-connection-id-05)
+ * which allows to identify DTLS connections across changes
+ * in the underlying transport.
+ *
+ * Setting this option enables the SSL APIs `mbedtls_ssl_set_cid()`,
+ * `mbedtls_ssl_get_peer_cid()` and `mbedtls_ssl_conf_cid()`.
+ * See the corresponding documentation for more information.
+ *
+ * \warning The Connection ID extension is still in draft state.
+ *          We make no stability promises for the availability
+ *          or the shape of the API controlled by this option.
+ *
+ * The maximum lengths of outgoing and incoming CIDs can be configured
+ * through the options
+ * - MBEDTLS_SSL_CID_OUT_LEN_MAX
+ * - MBEDTLS_SSL_CID_IN_LEN_MAX.
+ *
+ * Requires: MBEDTLS_SSL_PROTO_DTLS
+ *
+ * Uncomment to enable the Connection ID extension.
+ */
+//#define MBEDTLS_SSL_DTLS_CONNECTION_ID
 
 /**
  * \def MBEDTLS_SSL_ASYNC_PRIVATE
@@ -1384,6 +1435,28 @@
  * Comment this macro to disable support for FALLBACK_SCSV
  */
 #define MBEDTLS_SSL_FALLBACK_SCSV
+
+/**
+ * \def MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+ *
+ * This option controls the availability of the API mbedtls_ssl_get_peer_cert()
+ * giving access to the peer's certificate after completion of the handshake.
+ *
+ * Unless you need mbedtls_ssl_peer_cert() in your application, it is
+ * recommended to disable this option for reduced RAM usage.
+ *
+ * \note If this option is disabled, mbedtls_ssl_get_peer_cert() is still
+ *       defined, but always returns \c NULL.
+ *
+ * \note This option has no influence on the protection against the
+ *       triple handshake attack. Even if it is disabled, Mbed TLS will
+ *       still ensure that certificates do not change during renegotiation,
+ *       for exaple by keeping a hash of the peer's certificate.
+ *
+ * Comment this macro to disable storing the peer's certificate
+ * after the handshake.
+ */
+#define MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
 
 /**
  * \def MBEDTLS_SSL_HW_RECORD_ACCEL
@@ -1681,6 +1754,33 @@
 //#define MBEDTLS_THREADING_PTHREAD
 
 /**
+ * \def MBEDTLS_USE_PSA_CRYPTO
+ *
+ * Make the X.509 and TLS library use PSA for cryptographic operations, and
+ * enable new APIs for using keys handled by PSA Crypto.
+ *
+ * \note Development of this option is currently in progress, and parts
+ * of the X.509 and TLS modules are not ported to PSA yet. However, these parts
+ * will still continue to work as usual, so enabling this option should not
+ * break backwards compatibility.
+ *
+ * \warning The PSA Crypto API is in beta stage. While you're welcome to
+ * experiment using it, incompatible API changes are still possible, and some
+ * parts may not have reached the same quality as the rest of Mbed TLS yet.
+ *
+ * \warning This option enables new Mbed TLS APIs that are dependent on the
+ * PSA Crypto API, so can't come with the same stability guarantees as the
+ * rest of the Mbed TLS APIs. You're welcome to experiment with them, but for
+ * now, access to these APIs is opt-in (via enabling the present option), in
+ * order to clearly differentiate them from the stable Mbed TLS APIs.
+ *
+ * Requires: MBEDTLS_PSA_CRYPTO_C.
+ *
+ * Uncomment this to enable internal use of PSA Crypto and new associated APIs.
+ */
+//#define MBEDTLS_USE_PSA_CRYPTO
+
+/**
  * \def MBEDTLS_VERSION_FEATURES
  *
  * Allow run-time checking of compile-time enabled features. Thus allowing users
@@ -1714,6 +1814,25 @@
  * Uncomment to prevent an error.
  */
 //#define MBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION
+
+/**
+ * \def MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK
+ *
+ * If set, this enables the X.509 API `mbedtls_x509_crt_verify_with_ca_cb()`
+ * and the SSL API `mbedtls_ssl_conf_ca_cb()` which allow users to configure
+ * the set of trusted certificates through a callback instead of a linked
+ * list.
+ *
+ * This is useful for example in environments where a large number of trusted
+ * certificates is present and storing them in a linked list isn't efficient
+ * enough, or when the set of trusted certificates changes frequently.
+ *
+ * See the documentation of `mbedtls_x509_crt_verify_with_ca_cb()` and
+ * `mbedtls_ssl_conf_ca_cb()` for more information.
+ *
+ * Uncomment to enable trusted certificate callbacks.
+ */
+//#define MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK
 
 /**
  * \def MBEDTLS_X509_CHECK_KEY_USAGE
@@ -2689,6 +2808,48 @@
 #define MBEDTLS_POLY1305_C
 
 /**
+ * \def MBEDTLS_PSA_CRYPTO_C
+ *
+ * Enable the Platform Security Architecture cryptography API.
+ *
+ * \warning The PSA Crypto API is still beta status. While you're welcome to
+ * experiment using it, incompatible API changes are still possible, and some
+ * parts may not have reached the same quality as the rest of Mbed TLS yet.
+ *
+ * Module:  crypto/library/psa_crypto.c
+ *
+ * Requires: MBEDTLS_CTR_DRBG_C, MBEDTLS_ENTROPY_C
+ *
+ */
+//#define MBEDTLS_PSA_CRYPTO_C
+
+/**
+ * \def MBEDTLS_PSA_CRYPTO_STORAGE_C
+ *
+ * Enable the Platform Security Architecture persistent key storage.
+ *
+ * Module:  crypto/library/psa_crypto_storage.c
+ *
+ * Requires: MBEDTLS_PSA_CRYPTO_C,
+ *           either MBEDTLS_PSA_ITS_FILE_C or a native implementation of
+ *           the PSA ITS interface
+ */
+//#define MBEDTLS_PSA_CRYPTO_STORAGE_C
+
+/**
+ * \def MBEDTLS_PSA_ITS_FILE_C
+ *
+ * Enable the emulation of the Platform Security Architecture
+ * Internal Trusted Storage (PSA ITS) over files.
+ *
+ * Module:  crypto/library/psa_its_file.c
+ *
+ * Requires: MBEDTLS_FS_IO
+ *
+ */
+//#define MBEDTLS_PSA_ITS_FILE_C
+
+/**
  * \def MBEDTLS_RIPEMD160_C
  *
  * Enable the RIPEMD-160 hash algorithm.
@@ -3091,21 +3252,19 @@
 #define MBEDTLS_PLATFORM_PRINTF_MACRO        mbedtls_compat_sgx_printf /**< Default printf macro to use, can be undefined */
 /* Note: your snprintf must correctly zero-terminate the buffer! */
 //#define MBEDTLS_PLATFORM_SNPRINTF_MACRO    snprintf /**< Default snprintf macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_VSNPRINTF_MACRO    vsnprintf /**< Default vsnprintf macro to use, can be undefined */
 //#define MBEDTLS_PLATFORM_NV_SEED_READ_MACRO   mbedtls_platform_std_nv_seed_read /**< Default nv_seed_read function to use, can be undefined */
 //#define MBEDTLS_PLATFORM_NV_SEED_WRITE_MACRO  mbedtls_platform_std_nv_seed_write /**< Default nv_seed_write function to use, can be undefined */
 
 /**
  * \brief       This macro is invoked by the library when an invalid parameter
- *              is detected that is only checked with #MBEDTLS_CHECK_PARAMS
+ *              is detected that is only checked with MBEDTLS_CHECK_PARAMS
  *              (see the documentation of that option for context).
  *
- *              When you leave this undefined here, the library provides
- *              a default definition. If the macro #MBEDTLS_CHECK_PARAMS_ASSERT
- *              is defined, the default definition is `assert(cond)`,
- *              otherwise the default definition calls a function
- *              mbedtls_param_failed(). This function is declared in
- *              `platform_util.h` for the benefit of the library, but
- *              you need to define in your application.
+ *              When you leave this undefined here, a default definition is
+ *              provided that invokes the function mbedtls_param_failed(),
+ *              which is declared in platform_util.h for the benefit of the
+ *              library, but that you need to define in your application.
  *
  *              When you define this here, this replaces the default
  *              definition in platform_util.h (which no longer declares the
@@ -3114,9 +3273,6 @@
  *              particular, that all the necessary declarations are visible
  *              from within the library - you can ensure that by providing
  *              them in this file next to the macro definition).
- *              If you define this macro to call `assert`, also define
- *              #MBEDTLS_CHECK_PARAMS_ASSERT so that library source files
- *              include `<assert.h>`.
  *
  *              Note that you may define this macro to expand to nothing, in
  *              which case you don't have to worry about declarations or
@@ -3186,6 +3342,37 @@
  * independently of the outgoing I/O buffer.
  */
 //#define MBEDTLS_SSL_IN_CONTENT_LEN              16384
+
+/** \def MBEDTLS_SSL_CID_IN_LEN_MAX
+ *
+ * The maximum length of CIDs used for incoming DTLS messages.
+ *
+ */
+//#define MBEDTLS_SSL_CID_IN_LEN_MAX 32
+
+/** \def MBEDTLS_SSL_CID_OUT_LEN_MAX
+ *
+ * The maximum length of CIDs used for outgoing DTLS messages.
+ *
+ */
+//#define MBEDTLS_SSL_CID_OUT_LEN_MAX 32
+
+/** \def MBEDTLS_SSL_CID_PADDING_GRANULARITY
+ *
+ * This option controls the use of record plaintext padding
+ * when using the Connection ID extension in DTLS 1.2.
+ *
+ * The padding will always be chosen so that the length of the
+ * padded plaintext is a multiple of the value of this option.
+ *
+ * Note: A value of \c 1 means that no padding will be used
+ *       for outgoing records.
+ *
+ * Note: On systems lacking division instructions,
+ *       a power of two should be preferred.
+ *
+ */
+//#define MBEDTLS_SSL_CID_PADDING_GRANULARITY 16
 
 /** \def MBEDTLS_SSL_OUT_CONTENT_LEN
  *
