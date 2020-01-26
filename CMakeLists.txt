@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(mbedtls_SGX "C" "CXX")
 
-set(MBEDTLS_VERSION 2.16.3)
+set(MBEDTLS_VERSION 2.16.4)
 
 set(SGX_SDK /opt/intel/sgxsdk)
 set(SGX_ARCH x64)
