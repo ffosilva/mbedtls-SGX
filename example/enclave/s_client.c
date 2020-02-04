@@ -919,8 +919,9 @@ send_request:
     LL_LOG("%d bytes written in %d fragments", written, frags);
     LL_LOG("%s", (char*) buf);
 
+#if defined(MBEDTLS_DEBUG_C)
     mbedtls_debug_print_buf(&ssl, 0, __FILE__, __LINE__, "bytes written: ", buf, written);
-
+#endif
     /*
      * 7. Read the HTTP response
      */
@@ -964,7 +965,9 @@ send_request:
             len = ret;
 
             LL_LOG( "get %d bytes ending with %x", len, output[len-1]);
+#if defined(MBEDTLS_DEBUG_C)
           mbedtls_debug_print_buf(&ssl, 0, __FILE__, __LINE__, "response", output, len);
+#endif
             // TODO: Add full-fledge HTTP parser here
             // possibly from libcurl
             if( ret > 0 && (output[len-1] == '\n' || output[len-1] == '}'))

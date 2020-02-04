@@ -110,7 +110,10 @@ TLSConnectionHandler::TLSConnectionHandler() {
   if (debug_level < 0) {
     debug_level = 0;
   }
+
+#if defined(MBEDTLS_DEBUG_C)
   mbedtls_debug_set_threshold(debug_level);
+#endif
 
   /* mbedtls_ssl_cache_get() and mbedtls_ssl_cache_set() are thread-safe if
    * MBEDTLS_THREADING_C is set.
