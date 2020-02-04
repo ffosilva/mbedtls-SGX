@@ -11,7 +11,10 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c threading_alt.c mbedtls_compat_sgx.c dummy.c net_sockets_proxy.c)
+# remove default AESNI implementation in favor of alternate one
+list(REMOVE_ITEM MBEDTLS_SGX_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/library/aesni.c)
+
+add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c aesni_alt.c threading_alt.c mbedtls_compat_sgx.c dummy.c net_sockets_proxy.c)
 
 # Enable network errors handling by error.c
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/library/error.c PROPERTIES COMPILE_FLAGS -DMBEDTLS_NET_C)
