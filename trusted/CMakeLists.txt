@@ -5,10 +5,9 @@ FILE(GLOB MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/*.h)
 FILE(GLOB MBEDTLS_SGX_COMPAT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}_t.c ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}_t.h
+    OUTPUT ${PROJECT_NAME}_t.c ${PROJECT_NAME}_t.h
     COMMAND ${SGX_EDGER8R} --trusted ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.edl
     --search-path ${SGX_SDK}/include
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # remove default AESNI implementation in favor of alternate one
@@ -32,6 +31,7 @@ include_directories(
     ${SGX_SDK}/include
     ${SGX_SDK}/include/tlibc
     ${SGX_SDK}/include/stlport
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SGX_COMMON_CFLAGS} -nostdinc -fvisibility=hidden -fpie -fstack-protector")

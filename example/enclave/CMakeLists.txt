@@ -13,17 +13,18 @@ set_directory_properties(PROPERTIES
         ADDITIONAL_MAKE_CLEAN_FILES "Enclave_t.c; Enclave_t.h")
 
 add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Enclave_t.c ${CMAKE_CURRENT_SOURCE_DIR}/Enclave_h.c
+        OUTPUT Enclave_t.c Enclave_t.h
         COMMAND ${SGX_EDGER8R} --trusted Enclave.edl
         --search-path ${SGX_SDK}/include
+	--search-path ${CMAKE_CURRENT_SOURCE_DIR}
         --search-path ${CMAKE_SOURCE_DIR}/trusted
-        COMMENT "Generating Enclave_t.{c,h}"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )
+        COMMENT "Generating Enclave_t.{c,h}")
 
 add_library(enclave SHARED ${SOURCE_FILES})
 
 include_directories(
-        $(CMAKE_CURRENT_SOURCE_DIR)
+        ${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_SOURCE_DIR}/trusted/config
 	${CMAKE_SOURCE_DIR}/trusted/include
         ${CMAKE_SOURCE_DIR}/include
