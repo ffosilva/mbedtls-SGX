@@ -7,7 +7,7 @@ include_directories(
     ../trusted/config
     ../trusted/include
     ../trusted/mbedtls/include
-    ${SGX_SDK}/include)
+    ${SGX_PATH}/include)
 
 install(TARGETS ${PROJECT_NAME}_u
     DESTINATION lib

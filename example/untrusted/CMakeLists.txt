@@ -10,7 +10,7 @@ add_custom_command(
         OUTPUT Enclave_u.c Enclave_u.h
         COMMAND ${SGX_EDGER8R} --untrusted Enclave.edl
         --search-path ${CMAKE_CURRENT_SOURCE_DIR}/../enclave/ # enclave.edl
-        --search-path ${SGX_SDK}/include
+	--search-path ${SGX_PATH}/include
         --search-path ${CMAKE_SOURCE_DIR}/trusted # mbedtls_sgx.edl
         COMMENT "Generating Enclave_u.{c,h}"
 )
@@ -20,7 +20,7 @@ add_executable(s_server Enclave_u.c s_server.cpp Utils.cpp)
 add_executable(m_server m_server.cpp mbedtls_error.c Enclave_u.c Utils.cpp)
 
 include_directories(
-        ${SGXSDK_INCLUDE_DIRS}
+        ${SGX_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/include
 	${CMAKE_SOURCE_DIR}/trusted/config

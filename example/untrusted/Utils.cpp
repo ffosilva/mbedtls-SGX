@@ -1,5 +1,5 @@
 #include "sgx_urts.h"
-#include "sgx_uae_service.h"
+#include "sgx_uae_launch.h"
 
 #include <stdio.h>
 #include <string.h>

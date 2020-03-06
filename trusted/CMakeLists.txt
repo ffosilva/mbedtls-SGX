@@ -7,7 +7,7 @@ FILE(GLOB MBEDTLS_SGX_COMPAT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 add_custom_command(
     OUTPUT ${PROJECT_NAME}_t.c ${PROJECT_NAME}_t.h
     COMMAND ${SGX_EDGER8R} --trusted ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.edl
-    --search-path ${SGX_SDK}/include
+    --search-path ${SGX_PATH}/include
 )
 
 # remove default AESNI implementation in favor of alternate one
@@ -28,9 +28,9 @@ include_directories(
     $(CMAKE_CURRENT_SOURCE_DIR)/config
     $(CMAKE_CURRENT_SOURCE_DIR)/include
     mbedtls/include
-    ${SGX_SDK}/include
-    ${SGX_SDK}/include/tlibc
-    ${SGX_SDK}/include/stlport
+    ${SGX_PATH}/include
+    ${SGX_PATH}/include/tlibc
+    ${SGX_PATH}/include/stlport
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 

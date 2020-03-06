@@ -2,16 +2,12 @@
 cmake_minimum_required(VERSION 3.0)
 project(mbedtls_SGX "C" "CXX")
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+find_package(SGX REQUIRED)
+
 set(MBEDTLS_VERSION 2.16.5)
 
-set(SGX_SDK /opt/intel/sgxsdk)
-set(SGX_ARCH x64)
-set(SGX_MODE SIM CACHE STRING "SGX mode: SIM or HW") # SGX mode: sim, hw
 set(COMPILE_EXAMPLES NO CACHE BOOL "Build examples")
-set(SGX_BUILD DEBUG CACHE STRING "Build: DEBUG, PRERELEASE or RELEASE")
-
-include (cmake/Init.cmake)
-include (cmake/ConfigSGX.cmake)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${MBEDTLS_VERSION})
 
@@ -25,3 +21,6 @@ add_subdirectory(ocall)
 if (COMPILE_EXAMPLES)
     add_subdirectory(example)
 endif()
+
+message(STATUS "=> SGX_MODE: " ${SGX_MODE})
+message(STATUS "=> SGX_HW: " ${SGX_HW})
