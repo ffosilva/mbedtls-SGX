@@ -1,6 +1,6 @@
-set(MBEDTLS_SGX_SRC_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/include)
+set(MBEDTLS_SGX_SRC_INCLUDE_PATH ${MBEDTLS_SRC_DIR}/include)
 
-FILE(GLOB MBEDTLS_SGX_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/library/*.c)
+FILE(GLOB MBEDTLS_SGX_SRC_FILES ${MBEDTLS_SRC_DIR}/library/*.c)
 FILE(GLOB MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/*.h)
 FILE(GLOB MBEDTLS_SGX_COMPAT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 
@@ -11,12 +11,12 @@ add_custom_command(
 )
 
 # remove default AESNI implementation in favor of alternate one
-list(REMOVE_ITEM MBEDTLS_SGX_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/library/aesni.c)
+list(REMOVE_ITEM MBEDTLS_SGX_SRC_FILES ${MBEDTLS_SRC_DIR}/library/aesni.c)
 
 add_library(${PROJECT_NAME}_t STATIC ${MBEDTLS_SGX_SRC_FILES} ${PROJECT_NAME}_t.c aesni_alt.c threading_alt.c mbedtls_compat_sgx.c dummy.c net_sockets_proxy.c)
 
 # Enable network errors handling by error.c
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/library/error.c PROPERTIES COMPILE_FLAGS -DMBEDTLS_NET_C)
+set_source_files_properties(${MBEDTLS_SRC_DIR}/library/error.c PROPERTIES COMPILE_FLAGS -DMBEDTLS_NET_C)
 
 list(REMOVE_ITEM MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/config.h)
 
@@ -25,9 +25,9 @@ install(FILES ${MBEDTLS_SGX_SRC_HEADERS}
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
 include_directories(
-    $(CMAKE_CURRENT_SOURCE_DIR)/config
-    $(CMAKE_CURRENT_SOURCE_DIR)/include
-    mbedtls/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/config
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${MBEDTLS_SGX_SRC_INCLUDE_PATH}
     ${SGX_PATH}/include
     ${SGX_PATH}/include/tlibc
     ${SGX_PATH}/include/stlport

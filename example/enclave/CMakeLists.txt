@@ -27,7 +27,7 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_SOURCE_DIR}/trusted/config
 	${CMAKE_SOURCE_DIR}/trusted/include
-        ${CMAKE_SOURCE_DIR}/include
+        ${MBEDTLS_SRC_DIR}/include
         ${SGX_PATH}/include
         ${SGX_PATH}/include/tlibc
         ${SGX_PATH}/include/libcxx

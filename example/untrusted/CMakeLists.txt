@@ -22,7 +22,7 @@ add_executable(m_server m_server.cpp mbedtls_error.c Enclave_u.c Utils.cpp)
 include_directories(
         ${SGX_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}/include
+        ${MBEDTLS_SRC_DIR}/include
 	${CMAKE_SOURCE_DIR}/trusted/config
 	${CMAKE_SOURCE_DIR}/trusted/include
 	${CMAKE_CURRENT_BINARY_DIR}

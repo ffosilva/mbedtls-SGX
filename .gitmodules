@@ -1,3 +1,3 @@
 [submodule "trusted/mbedtls"]
-	path = trusted/mbedtls
+	path = external/mbedtls
 	url = http://github.com/armmbed/mbedtls.git
