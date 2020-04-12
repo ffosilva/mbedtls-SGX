@@ -4,9 +4,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS} -std=c++11")
 add_library(${PROJECT_NAME}_u STATIC aesni_ocalls.c net_sockets_ocalls.c std_ocalls.c)
 
 include_directories(
-    ../trusted/config
-    ../trusted/include
-    ../trusted/mbedtls/include
+    ${PROJECT_SOURCE_DIR}/trusted/config
+    ${PROJECT_SOURCE_DIR}/trusted/include
+    ${MBEDTLS_SRC_DIR}/include
     ${SGX_PATH}/include)
 
 install(TARGETS ${PROJECT_NAME}_u
