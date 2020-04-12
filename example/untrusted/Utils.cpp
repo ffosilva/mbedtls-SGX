@@ -76,9 +76,11 @@ int initialize_enclave(sgx_enclave_id_t *eid)
     if (home_dir != NULL && 
         (strlen(home_dir)+strlen("/")+sizeof(TOKEN_FILENAME)+1) <= MAX_PATH) {
         /* compose the token path */
-        strncpy(token_path, home_dir, strlen(home_dir));
-        strncat(token_path, "/", strlen("/"));
-        strncat(token_path, TOKEN_FILENAME, sizeof(TOKEN_FILENAME)+1);
+        memcpy(token_path, home_dir, strlen(home_dir));
+        token_path[strlen(home_dir)] = '\0';
+
+        strncat(token_path, "/", sizeof("/"));
+        strncat(token_path, TOKEN_FILENAME, sizeof(TOKEN_FILENAME));
     } else {
         /* if token path is too long or $HOME is NULL */
         strncpy(token_path, TOKEN_FILENAME, sizeof(TOKEN_FILENAME));
