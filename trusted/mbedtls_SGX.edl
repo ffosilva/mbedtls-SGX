@@ -28,8 +28,5 @@ enclave {
 
         // printf
         int ocall_mbedtls_compat_sgx_print_string([in, string] const char *str);
-
-        // aesni
-        unsigned int ocall_get_cpuid();
     };
 };

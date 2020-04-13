@@ -26,6 +26,7 @@
 
 #include "mbedtls_SGX_t.h"
 #include "mbedtls_compat_sgx.h"
+#include "sgx_cpuid.h"
 
 #if !defined(MBEDTLS_CONFIG_FILE)
 #include "mbedtls/config.h"
@@ -57,11 +58,11 @@
 int mbedtls_aesni_has_support( unsigned int what )
 {
     static int done = 0;
-    static unsigned int c = 0;
+    static int cpuinfo[4] = {0};
     
     if ( ! done)
     {
-        sgx_status_t ret = ocall_get_cpuid(&c);
+        sgx_status_t ret = sgx_cpuid(cpuinfo, 1);
         if ( ret != SGX_SUCCESS )
         {
             mbedtls_compat_sgx_printf("AESNI: unable to retrieve CPUID!\n");
@@ -70,7 +71,7 @@ int mbedtls_aesni_has_support( unsigned int what )
         done = 1;
     }
 
-    return( ( c & what ) != 0 );
+    return( ( cpuinfo[2] & what ) != 0 );
 }
 
 /*
