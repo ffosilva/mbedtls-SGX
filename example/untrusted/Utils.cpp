@@ -1,5 +1,10 @@
 #include "sgx_urts.h"
+
+#ifdef HAVE_SGX_UAE_LAUNCH_H
 #include "sgx_uae_launch.h"
+#else
+#include "sgx_uae_service.h"
+#endif /* HAVE_SGX_UAE_LAUNCH_H */
 
 #include <stdio.h>
 #include <string.h>
