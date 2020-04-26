@@ -1,4 +1,4 @@
-FROM ffosilva/sgx:sgx_2.8
+FROM ffosilva/sgx:sgx_2.9.1
 
 ARG COMPILE_EXAMPLES=YES
 ARG SGX_HW=YES
