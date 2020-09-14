@@ -1,8 +1,14 @@
-FROM ffosilva/sgx:sgx_2.9.1
+FROM ffosilva/sgx:sgx_2.11
 
 ARG COMPILE_EXAMPLES=YES
 ARG SGX_HW=YES
 ARG SGX_MODE=Debug
+
+RUN apt-get update && \
+    apt-get install -y \
+    cmake \
+    gcc \
+    g++
 
 ADD . ./
 
