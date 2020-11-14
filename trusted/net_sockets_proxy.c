@@ -1,7 +1,7 @@
 /*
  *  TCP/IP or UDP/IP networking functions
  *
- *  Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
+ *  Copyright The Mbed TLS Contributors
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -15,20 +15,14 @@
  *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
- *  This file is part of mbed TLS (https://tls.mbed.org)
  */
 
 #include "mbedtls_SGX_t.h"
 #include "mbedtls/platform.h"
 
-#if !defined(MBEDTLS_CONFIG_FILE)
-#include "mbedtls/config.h"
-#else
-#include MBEDTLS_CONFIG_FILE
-#endif
+#include "common.h"
 
-#include "mbedtls/net.h"
+#include "mbedtls/net_sockets.h"
 
 #if (defined(_WIN32) || defined(_WIN32_WCE)) && !defined(EFIX64) && \
     !defined(EFI32)
@@ -47,8 +41,8 @@
 #endif
 #endif /* _MSC_VER */
 
-#define read(fd,buf,len)        recv(fd,(char*)buf,(int) len,0)
-#define write(fd,buf,len)       send(fd,(char*)buf,(int) len,0)
+#define read(fd,buf,len)        recv( fd, (char*)( buf ), (int)( len ), 0 )
+#define write(fd,buf,len)       send( fd, (char*)( buf ), (int)( len ), 0 )
 #define close(fd)               closesocket(fd)
 
 static int wsa_init_done = 0;
@@ -59,10 +53,11 @@ static int wsa_init_done = 0;
 #include <unistd.h>
 #include <errno.h>
 
+
 #endif /* ( _WIN32 || _WIN32_WCE ) && !EFIX64 && !EFI32 */
 
 /* Some MS functions want int and MSVC warns if we pass size_t,
- * but the standard fucntions use socklen_t, so cast only for MSVC */
+ * but the standard functions use socklen_t, so cast only for MSVC */
 #if defined(_MSC_VER)
 #define MSVC_INT_CAST   (int)
 #else
@@ -241,6 +236,18 @@ int mbedtls_net_send(void *ctx, const unsigned char *buf, size_t len) {
   }
 
   return ret;
+}
+
+/*
+ * Close the connection
+ */
+void mbedtls_net_close(mbedtls_net_context *ctx) {
+  sgx_status_t ocall_ret;
+
+  ocall_ret = ocall_mbedtls_net_close(ctx);
+  if (SGX_SUCCESS != ocall_ret) {
+    mbedtls_printf("ocall_mbedtls_net_close returned %#x\n", ocall_ret);
+  }
 }
 
 /*

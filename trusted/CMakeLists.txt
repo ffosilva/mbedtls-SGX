@@ -1,4 +1,5 @@
 set(MBEDTLS_SGX_SRC_INCLUDE_PATH ${MBEDTLS_SRC_DIR}/include)
+set(MBEDTLS_SGX_SRC_LIB_PATH ${MBEDTLS_SRC_DIR}/library)
 
 FILE(GLOB MBEDTLS_SGX_SRC_FILES ${MBEDTLS_SRC_DIR}/library/*.c)
 FILE(GLOB MBEDTLS_SGX_SRC_HEADERS ${MBEDTLS_SGX_SRC_INCLUDE_PATH}/mbedtls/*.h)
@@ -28,6 +29,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/config
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${MBEDTLS_SGX_SRC_INCLUDE_PATH}
+    ${MBEDTLS_SGX_SRC_LIB_PATH}
     ${SGX_PATH}/include
     ${SGX_PATH}/include/tlibc
     ${SGX_PATH}/include/stlport

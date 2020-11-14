@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME}_u STATIC net_sockets_ocalls.c std_ocalls.c)
 include_directories(
     ${PROJECT_SOURCE_DIR}/trusted/config
     ${PROJECT_SOURCE_DIR}/trusted/include
+    ${MBEDTLS_SRC_DIR}/library
     ${MBEDTLS_SRC_DIR}/include
     ${SGX_PATH}/include)
 
