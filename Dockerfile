@@ -1,4 +1,4 @@
-FROM ffosilva/sgx:sgx_2.11
+FROM ffosilva/sgx:sgx_2.12
 
 RUN apt-get update && \
     apt-get install -y \
