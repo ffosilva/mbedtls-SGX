@@ -39,10 +39,10 @@ git clone https://github.com/ffosilva/mbedtls-compat-sgx.git --recursive && cd m
 make lib
 ```
 
-Include the resultant `mbedtls_SGX-2.16.6` as part of your project.
+Include the resultant `mbedtls_SGX-2.16.8` as part of your project.
 
 ```
-mbedtls_SGX-2.16.6
+mbedtls_SGX-2.16.8
 ├── include
 │   └── mbedtls
 └── lib

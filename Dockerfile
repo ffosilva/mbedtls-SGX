@@ -1,9 +1,5 @@
 FROM ffosilva/sgx:sgx_2.11
 
-ARG COMPILE_EXAMPLES=YES
-ARG SGX_HW=YES
-ARG SGX_MODE=Debug
-
 RUN apt-get update && \
     apt-get install -y \
     cmake \
@@ -11,6 +7,10 @@ RUN apt-get update && \
     g++
 
 ADD . ./
+
+ARG COMPILE_EXAMPLES=YES
+ARG SGX_HW=YES
+ARG SGX_MODE=PreRelease
 
 RUN mkdir build \
  && cd build \
